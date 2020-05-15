@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+
+  wordpress:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wpress01
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wpressuser
+      WORDPRESS_DB_PASSWORD: passw0rd
+      WORDPRESS_DB_NAME: wpressdb
+    volumes:
+      - ./wp_files:/var/www/html
+    networks:
+      - wpressnet
+
+  db:
+    image: mysql:5.7
+    container_name: mysql01
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: wpressdb
+      MYSQL_USER: wpressuser
+      MYSQL_PASSWORD: passw0rd
+      MYSQL_ROOT_PASSWORD: passw0rd
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - wpressnet
+
+volumes:
+  wp_files:
+  db:
+  
+networks:
+  wpressnet:
